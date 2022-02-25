@@ -1,0 +1,733 @@
+Files /opt/shibboleth-idp-3.1.1-CAS/conf/attribute-filter.xml and /opt/shibboleth-idp-3.1.1-generated/conf/attribute-filter.xml differ
+Files /opt/shibboleth-idp-3.1.1-CAS/conf/attribute-resolver.xml and /opt/shibboleth-idp-3.1.1-generated/conf/attribute-resolver.xml differ
+Files /opt/shibboleth-idp-3.1.1-CAS/conf/authn/general-authn.xml and /opt/shibboleth-idp-3.1.1-generated/conf/authn/general-authn.xml differ
+Files /opt/shibboleth-idp-3.1.1-CAS/conf/idp.properties and /opt/shibboleth-idp-3.1.1-generated/conf/idp.properties differ
+Files /opt/shibboleth-idp-3.1.1-CAS/conf/ldap.properties and /opt/shibboleth-idp-3.1.1-generated/conf/ldap.properties differ
+Files /opt/shibboleth-idp-3.1.1-CAS/conf/services.properties and /opt/shibboleth-idp-3.1.1-generated/conf/services.properties differ
+
+LDAP: login.config???? attribute-resolver.xml (LDP connector)
+
+sudo diff /opt/shibboleth-idp-3.1.1-CAS/conf/authn/general-authn.xml  /opt/shibboleth-idp-3.1.1-generated/conf/authn/general-authn.xml
+<         <bean id="authn/Shibcas" parent="shibboleth.AuthenticationFlow"
+<                 p:passiveAuthenticationSupported="true"
+<                 p:forcedAuthenticationSupported="true"
+<                 p:nonBrowserSupported="false" />
+<
+
+sudo diff /opt/shibboleth-idp-3.1.1-CAS/conf/idp.properties /opt/shibboleth-idp-3.1.1-generated/conf/idp.properties
+32,35c32,35
+< idp.signing.key= %{idp.home}/credentials/idp.key
+< idp.signing.cert= %{idp.home}/credentials/idp.crt
+< idp.encryption.key= %{idp.home}/credentials/idp.key
+< idp.encryption.cert= %{idp.home}/credentials/idp.crt
+---
+> idp.signing.key= %{idp.home}/credentials/idp-signing.key
+> idp.signing.cert= %{idp.home}/credentials/idp-signing.crt
+> idp.encryption.key= %{idp.home}/credentials/idp-encryption.key
+> idp.encryption.cert= %{idp.home}/credentials/idp-encryption.crt
+95c95
+< idp.authn.flows= Shibcas   !!!!
+---
+> idp.authn.flows= Password
+101,116d100
+< # CAS Client properties (usage loosely matches that of the Java CAS Client)
+< ## CAS Server Properties
+< shibcas.casServerUrlPrefix = https://loginqa.bc.edu/cas
+< shibcas.casServerLoginUrl = ${shibcas.casServerUrlPrefix}/login
+<
+< ## Shibboleth Server Properties
+< shibcas.serverName = https://loginqa.bc.edu
+<
+< # By default you always get the AuthenticatedNameTranslator, add additional code to cover your custom needs.
+< # Takes a comma separated list of fully qualified class names
+< # shibcas.casToShibTranslators = com.your.institution.MyCustomNamedTranslatorClass
+<
+< # Regular expression of forced "initial" methods when no session exists,
+< # usually in conjunction with the idp.authn.resolveAttribute property below.
+< idp.authn.flows.initial = Shibcas   !!!!
+<
+
+sudo diff /opt/shibboleth-idp-3.1.1-CAS/conf/ldap.properties /opt/shibboleth-idp-3.1.1-generated/conf/ldap.properties
+
+8,9c8,9
+< idp.authn.LDAP.useStartTLS                     = false
+< idp.authn.LDAP.useSSL                          = false
+---
+> #idp.authn.LDAP.useStartTLS                     = false
+> #idp.authn.LDAP.useSSL                          = false
+13c13
+< idp.authn.LDAP.sslConfig                       = certificateTrust
+---
+> #idp.authn.LDAP.sslConfig                       = certificateTrust
+22,23c22,23
+< #idp.authn.LDAP.returnAttributes                 = cn,businessCategory,mail
+< idp.authn.LDAP.returnAttributes               = displayname,eaglenumber,mailprimaryaddress,primaryaffiliation,uid,givenName,sn,schoolcode
+---
+> # idp.authn.LDAP.returnAttributes                 = cn,businessCategory,mail
+> idp.authn.LDAP.returnAttributes=displayname,eaglenumber,mailprimaryaddress,primaryaffiliation,uid
+34,35c34,35
+< idp.authn.LDAP.bindDN                           = uid=shibauthadm,ou=applicationadmins,dc=bc,dc=edu
+< idp.authn.LDAP.bindDNCredential                 = ...
+---
+> idp.authn.LDAP.bindDN                           = uid=casauthadm,ou=applicationadmins,dc=bc,dc=edu
+> idp.authn.LDAP.bindDNCredential                 = ...
+ 
+sudo diff /opt/shibboleth-idp-3.1.1-CAS/conf/services.properties /opt/shibboleth-idp-3.1.1-generated/conf/services.properties 
+12c12
+< #idp.service.relyingparty.resources= shibboleth.LegacyRelyingPartyResolverResources
+---
+> idp.service.relyingparty.resources= shibboleth.LegacyRelyingPartyResolverResources
+
+
+
+[ryazanov@shibqa1 ~]$ sudo diff --brief -r /opt/shibboleth-idp-3.1.1-CAS/flows /opt/shibboleth-idp-3.1.1-generated/flows
+[sudo] password for ryazanov:
+Only in /opt/shibboleth-idp-3.1.1-CAS/flows/authn: Shibcas
+
+[ryazanov@shibqa1 ~]$ sudo diff --brief -r /opt/shibboleth-idp-3.1.1-CAS/messages /opt/shibboleth-idp-3.1.1-generated/messages/
+Files /opt/shibboleth-idp-3.1.1-CAS/messages/error-messages.properties and /opt/shibboleth-idp-3.1.1-generated/messages/error-messages.properties differ
+
+
+[ryazanov@shibqa1 ~]$ sudo cp /opt/shibboleth-idp-3.1.1-CAS/conf/idp.properties /opt/shibboleth-idp-3.1.1-CAS/conf/idp.properties.20170220
+[ryazanov@shibqa1 ~]$ sudo vi /opt/shibboleth-idp-3.1.1-CAS/conf/idp.properties 
+From 
+idp.authn.flows= Shibcas
+idp.authn.flows.initial = Shibcas
+
+To 
+idp.authn.flows= Password
+idp.authn.flows.initial = Password
+
+https://bipsc3qa.bc.edu/xui/  F5
+
+[ryazanov@shibqa1 ~]$ sudo su shibadm
+[shibadm@shibqa1 ryazanov]$ cd /opt
+
+/opt/tomcat/bin/shutdown.sh
+
+[shibadm@shibqa1 opt]$ rm /opt/shibboleth-idp
+ln -s /opt/shibboleth-idp-3.1.1-CAS /opt/shibboleth-idp
+
+/opt/tomcat/bin/startup.sh
+
+ tail -f  /opt/tomcat/logs/catalina.out
+tail -f  /opt/shibboleth-idp/logs/idp-process.log
+
+[ryazanov@shibqa1 opt]$ sudo rm /opt/shibboleth-idp
+
+[ryazanov@shibqa1 opt]$ sudo ln -s shibboleth-idp-3.1.1-NAM shibboleth-idp
+[ryazanov@shibqa1 opt]$ ls -al |grep idp
+lrwxrwxrwx   1 root    root    24 Feb 20 12:06 shibboleth-idp -> shibboleth-idp-3.1.1-NAM
+drwxr-xr-x  21 shibadm shib  4096 May 11  2016 shibboleth-idp-3.1.1-CAS
+...
+[ryazanov@shibqa1 opt]$ sudo su - shibadm
+[shibadm@shibqa1 ~]$ /opt/tomcat/bin/startup.sh
+
+!!! [shibadm@shibqa1 ~]$  vi  /opt/shibboleth-idp/messages/authn-messages.properties Forgot password and such
+
+
+Good Morning,  Jim Clark is standing by to work on the shib system discussed in Leo's meeting yesterday.  Manish would one of your folks please contact Jim and explain to him what you want this new system to be?
+I have assigned the DR network IP of 136.167.8.107 for this system.
+And for identification purposes  I have named it drcanvasshib1.
+The sooner someone explains to Jim whats needed the soon this can be completed.
+Please keep this email strings copy list on all emails.
+Thanks - Carl
+
+
+Hi Jim
+
+Here's what we're looking for on the new shibboleth DR server
+
+Servername:  The servername chosen by Carl is fine 136.167.8.107
+OS:  Please install same as current drshib1
+[jerista@drshib1 ~]$ uname -a
+Linux drshib1 2.6.32-642.4.2.el6.x86_64 #1 SMP Mon Aug 15 02:06:41 EDT 2016 x86_64 x86_64 x86_64 GNU/Linuxapache-tomcat-8.0.21-jdk1.8.0_45
+[jerista@drshib1 ~]$ cat /etc/redhat-release
+Red Hat Enterprise Linux Server release 6.8 (Santiago)
+Resources:  You can clone current drshib1 resources for memory, CPU, and disk as they are sufficient.  There are no additional fs mounts.
+Filesystems to Copy:
+It would be a help if you could copy the following from drshib1 to  drcanvasshib1
+/opt/apache-tomcat-8.0.21-jdk1.8.0_45
+/opt/apache-tomcat-6.0.35
+/opt/audit
+/opt/jdk1.8.0_45
+/opt/shibboleth-identity-provider-3.1.1
+/opt/shibboleth-idp-3.1.1
+/opt/shibboleth-idp-3.1.1-NAM
+Users/Groups:
+import from drshib1
+
+
+APACHE
+
+Additional IP:
+We need an additional IP in the upper range of .37 for the F5 Virtual server which will point into this server.  Can you allocate/reserve this IP (without making any DNS changes?)  We just want to know what it is right now.
+
+Please let me know if you need anything else here?
+Thanks
+Joe
+
+Joe - I assigned 136.167.37.165 to you for canvas - Carl
+
+On the F5 side we have IP drlogin, the fw work is done, the DNS work is done, and I have to configure the resources on bipsc4dev.  
+
+I have also submitted cert request but have not heard back, I will push on this and will get the cert by EOD.
+
+I am planning to configure resources by EOD, it will take some time to pull everything together.  Hopefully I'll have the cert too, will let you know if I have any trouble.
+
+I'm not sure about the server and idp configuration side.
+
+I think maybe we should loop Manish into this discussion next week
+
+Last year I didn't care much about restore procedure because I decided to just take tarball from prod shib1, cas1 and explode in DR servers, which worked.
+
+We are going to have NAM DR this year.  I don't know if the expectation is for shib/nam integration.  Probably.  But I'm not 100% sure.  I think truth is we've simply never discussed it, so the questions haven't come up until now.
+
+I know that Saty and I are working on NAM DR restore procedures.  Assuming NAM is restored correctly, then can we just do the clone of production shib1 to the dr shib1?
+
+And then for drcanvasshib1, we still probably just want to point to directory and remove NAM integration?  I'm not sure...
+
+Joe
+
+
+
+  729  history |grep ln
+  731   sudo ln -s shibboleth-idp-3.1.1 shibboleth-idp
+  736   sudo ln -s shibboleth-idp-2.4.0/ shibboleth-idp
+  739   sudo ln -s shibboleth-idp-3.1.1-NAM shibboleth-idp
+ 1001  history |grep ln
+[ryazanov@shibdev1 ~]$ cd /opt
+[ryazanov@shibdev1 opt]$ ls -al |grep idp
+lrwxrwxrwx   1 root     root      24 Aug 15  2016 shibboleth-idp -> shibboleth-idp-3.1.1-NAM
+drwxr-xr-x  58 shibadm  shib    4096 Jan 20 15:00 shibboleth-idp-3.1.1-NAM
+drwxr-xr-x  57 root     root    4096 Jan 20 14:53 shibboleth-idp-3.1.1-NAM-20170120
+drwxr-xr-x  32 shibadm  shib    4096 May  6  2016 shibboleth-idp-3.1.1-NAM-joe-2015-backup
+
+
+
+http://shibboleth.net/pipermail/users/2016-February/027093.html
+http://www.esqsoft.com/examples/troubleshooting-http-using-telnet.htm
+
+
+
+[ryazanov@shibqa1 ~]$ ls -al /opt/apache-tomcat-8.0.21-jdk1.8.0_45/work/Catalina/localhost/idp/org/apache/jsp
+total 84
+drwxr-xr-x 3 shibadm shib  4096 Feb 20 12:10 .
+drwxr-xr-x 3 shibadm shib  4096 Jul  1  2015 ..
+-rw-r--r-- 1 shibadm shib  8576 Apr 30  2015 error_jsp.java
+-rw-r--r-- 1 shibadm shib  9558 May 11  2016 index_jsp.class
+-rw-r--r-- 1 shibadm shib 12766 May 11  2016 index_jsp.java
+-rw-r--r-- 1 shibadm shib  6689 Apr 30  2015 logout_jsp.class
+-rw-r--r-- 1 shibadm shib  5540 Apr 30  2015 logout_jsp.java
+-rw-r--r-- 1 shibadm shib  6925 Apr 30  2015 select_002dservice_jsp.class
+-rw-r--r-- 1 shibadm shib  6141 Apr 30  2015 select_002dservice_jsp.java
+drwxr-xr-x 3 shibadm shib  4096 Jul  1  2015 WEB_002dINF
+[ryazanov@shibqa1 ~]$ sudo find / -name idp.xml
+[sudo] password for ryazanov:
+/home/xujk/aaa/tomcat/conf/Catalina/localhost/idp.xml
+/home/xujk/opt-tomcat-conf/conf/Catalina/localhost/idp.xml
+/home/xujk/backup-before-1/aaa/tomcat/conf/Catalina/localhost/idp.xml
+/opt/apache-tomcat-6.0.35/conf/Catalina/localhost/idp.xml
+/opt/apache-tomcat-8.0.21-jdk1.8.0_45/conf/Catalina/localhost/idp.xml
+/opt/shibboleth-identity-provider-3.1.1/jetty-base/webapps/idp.xml
+[ryazanov@shibqa1 ~]$ sudo more /opt/apache-tomcat-8.0.21-jdk1.8.0_45/conf/Catalina/localhost/idp.xml
+<Context docBase="/opt/shibboleth-idp/war/idp.war"
+         privileged="true"
+         antiResourceLocking="false"
+         unpackWAR="false"
+         swallowOutput="true" />
+
+
+
+[ryazanov@shib1 ~]$ ls -al /opt/apache-tomcat-8.0.21-jdk1.8.0_45/work/Catalina/localhost/idp/org/apache/jsp
+total 80
+drwxr-xr-x 3 shibadm shib  4096 Oct 19 05:58 .
+drwxr-xr-x 3 shibadm shib  4096 Jun 29  2015 ..
+-rw-r--r-- 1 shibadm shib  9558 Jul 27  2016 index_jsp.class
+-rw-r--r-- 1 shibadm shib 12766 Jul 27  2016 index_jsp.java
+-rw-r--r-- 1 shibadm shib  8184 Apr 30  2015 login_jsp.java
+-rw-r--r-- 1 shibadm shib  5852 Jul 27  2016 logout_jsp.class
+-rw-r--r-- 1 shibadm shib  4817 Jul 27  2016 logout_jsp.java
+-rw-r--r-- 1 shibadm shib  6925 Apr 30  2015 select_002dservice_jsp.class
+-rw-r--r-- 1 shibadm shib  6141 Apr 30  2015 select_002dservice_jsp.java
+drwxr-xr-x 3 shibadm shib  4096 Jun 29  2015 WEB_002dINF
+[ryazanov@shib1 ~]$ sudo more /opt/apache-tomcat-8.0.21-jdk1.8.0_45/conf/Catalina/localhost/idp.xml
+[sudo] password for ryazanov:
+<Context docBase="/opt/shibboleth-idp/war/idp.war"
+        privileged="true"
+        antiResourceLocking="false"
+        antiJARLocking="false"
+        unpackWAR="false"
+        swallowOutput="true" />
+
+
+[ryazanov@drshib1 ~]$  sudo ls -al /opt/apache-tomcat-8.0.21-jdk1.8.0_45/work/Catalina/localhost/idp/org/apache/jsp/
+total 20
+drwxr-xr-x 3 shibadm shib 4096 Feb 21 10:26 .
+drwxr-xr-x 3 shibadm shib 4096 Feb 21 09:39 ..
+-rw-r--r-- 1 shibadm shib 8177 Apr 30  2015 login_jsp.java
+drwxr-xr-x 3 shibadm shib 4096 Feb 21 09:39 WEB_002dINF
+[ryazanov@drshib1 ~]$  sudo mv /opt/apache-tomcat-8.0.21-jdk1.8.0_45/work/Catalina/localhost/idp/org/apache/jsp/login_jsp.java /opt/apache-tomcat-8.0.21-jdk1.8.0_45/work/Catalina/localhost/idp/org/apache/jsp/login_jsp.java.bac
+
+
+[ryazanov@drshib1 ~]$  sudo cp -r /opt/apache-tomcat-8.0.21-jdk1.8.0_45/work/Catalina/localhost/idp/org/apache/jsp/ ./
+
+[ryazanov@drshib1 ~]$  sudo rm -rf /opt/apache-tomcat-8.0.21-jdk1.8.0_45/work/Catalina/localhost/idp/
+[ryazanov@drshib1 ~]$ sudo more /opt/apache-tomcat-8.0.21-jdk1.8.0_45/conf/Catalina/localhost/idp.xml
+<Context docBase="/opt/shibboleth-idp/war/idp.war"
+        privileged="true"
+        antiResourceLocking="false"
+        antiJARLocking="false"
+        unpackWAR="false"
+        swallowOutput="true" />
+[ryazanov@drshib1 ~]$ 
+
+
+Only on Shib1:
+drwxr-xr-x  6 shibadm shib     4096 Mar 17  2016 tmp
+[ryazanov@shib1 ~]$ ls -al /opt/shibboleth-idp-3.1.1/war/tmp
+total 33524
+drwxr-xr-x 6 shibadm shib     4096 Mar 17  2016 .
+drwxr-xr-x 3 shibadm shib     4096 Mar 17  2016 ..
+drwxr-xr-x 2 shibadm shib     4096 Apr 30  2015 css
+-rw-r--r-- 1 shibadm shib      398 Apr 30  2015 error-404.jsp
+-rw-r--r-- 1 shibadm shib     1283 Apr 30  2015 error.jsp
+-rw-r--r-- 1 shibadm shib 34232746 Mar 17  2016 idp.war
+drwxr-xr-x 2 shibadm shib     4096 Apr 30  2015 images
+-rw-r--r-- 1 shibadm shib     1007 Apr  2  2015 index.jsp
+-rw-r--r-- 1 shibadm shib     6523 Apr 30  2015 login.css
+-rw-r--r-- 1 shibadm shib      930 Apr 30  2015 login.css.20120514AM
+-rw-r--r-- 1 shibadm shib     1932 Apr 30  2015 login.css.20120627
+-rw-r--r-- 1 shibadm shib     1443 Apr 30  2015 login-error.jsp
+-rw-r--r-- 1 shibadm shib     2814 Apr 30  2015 login.jsp
+
+
+[shibadm@drshib1 ~]$ ls -al /opt/shibboleth-idp/war
+total 66656
+drwxr-xr-x  2 shibadm shib     4096 Feb 22 08:26 .
+drwxr-xr-x 20 shibadm shib     4096 Jul 27  2016 ..
+-rw-r--r--  1 shibadm shib 34126673 Jul 27  2016 idp.war
+-rw-r--r--  1 shibadm shib 34116674 Jul 27  2016 idp.war.dist
+
+
+
+
+[ryazanov@shibsp-test-01 cert-bc-wild-self]$ openssl x509 -noout -in   server.crt -issuer -subject -dates
+issuer= /C=US/ST=Massachusetts/L=Newton/O=Boston College/OU=ITS/CN=*.bc.edu/emailAddress=ryazanov@bc.edu
+subject= /C=US/ST=Massachusetts/L=Newton/O=Boston College/OU=ITS/CN=*.bc.edu/emailAddress=ryazanov@bc.edu
+notBefore=Feb 23 20:25:28 2016 GMT
+notAfter=Feb 21 20:25:28 2021 GMT
+[ryazanov@shibsp-test-01 cert-bc-wild-self]$ vi server.crt
+
+-----BEGIN CERTIFICATE-----
+MIIDnjCCAoYCCQCPEzy4np9nYTANBgkqhkiG9w0BAQUFADCBkDELMAkGA1UEBhMC
+VVMxFjAUBgNVBAgMDU1hc3NhY2h1c2V0dHMxDzANBgNVBAcMBk5ld3RvbjEXMBUG
+A1UECgwOQm9zdG9uIENvbGxlZ2UxDDAKBgNVBAsMA0lUUzERMA8GA1UEAwwIKi5i
+Yy5lZHUxHjAcBgkqhkiG9w0BCQEWD3J5YXphbm92QGJjLmVkdTAeFw0xNjAyMjMy
+MDI1MjhaFw0yMTAyMjEyMDI1MjhaMIGQMQswCQYDVQQGEwJVUzEWMBQGA1UECAwN
+TWFzc2FjaHVzZXR0czEPMA0GA1UEBwwGTmV3dG9uMRcwFQYDVQQKDA5Cb3N0b24g
+Q29sbGVnZTEMMAoGA1UECwwDSVRTMREwDwYDVQQDDAgqLmJjLmVkdTEeMBwGCSqG
+SIb3DQEJARYPcnlhemFub3ZAYmMuZWR1MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
+MIIBCgKCAQEA66xTkymxbK+qqZCqht5sAY71O78uQKIaqjO+8VyNtoJoot3D1tEE
+sgS2uFqM4wcYhlyiOIy+C+sI/iSjpvMO8H1QRg1y7vBPZ86xOXyje8OWlMxSntQv
+Z58B3C6PCIWoy2g8SmUtsMbEJkACzsNPDhP4xaT1LB26fGUxNpGb66CGAs0qtgil
+bhrQmfENlahYZE2Zv8RKe/gbtbKnqAxN9dC03BeKdkA5KQl6iZUhl5753zRS/WHj
+7qlianZixjmZ8LMAMALheENl7uEajUiny2lt1Q5VKUe281mYgWMoo9A+y0IqhxuM
+tpc+zRTK+HZkK7kdhIQZ2pfGRsErshu9xQIDAQABMA0GCSqGSIb3DQEBBQUAA4IB
+AQAAEbs8ZTu6BEBmNeB47vg8y4DkRebEJeJhE7mkkZ9N9k+uOYqNjibAt+yCtr2g
+7+YgCa/KZt6QRDXJjP+mOKsmDkRQv8najbXSqmc2FEaN1j4VuueaVNDAKPVE5zBu
+Wuy6EMPwz/KM57d/lTmRxt2C5Td8ChSmb2BrjVRxj5ZAxK7cP0DCVb2ZS3KJVvEL
+9xsFLSJSFCfMj4OamuLrZ2EqM9KGjqAJTbCtHd/FzRQGwMlyOzL8sH7p5fFqlWYX
+xOeb1VbpC7HHKYtl21HRuYeeuA6CFO3aT1vsS6llDPB3GasQtK9M2RLf8/Cm0JY4
+00W7kg98pPDV3zyt/mDPW0cK
+-----END CERTIFICATE-----
+
+
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA66xTkymxbK+qqZCqht5sAY71O78uQKIaqjO+8VyNtoJoot3D
+1tEEsgS2uFqM4wcYhlyiOIy+C+sI/iSjpvMO8H1QRg1y7vBPZ86xOXyje8OWlMxS
+ntQvZ58B3C6PCIWoy2g8SmUtsMbEJkACzsNPDhP4xaT1LB26fGUxNpGb66CGAs0q
+tgilbhrQmfENlahYZE2Zv8RKe/gbtbKnqAxN9dC03BeKdkA5KQl6iZUhl5753zRS
+/WHj7qlianZixjmZ8LMAMALheENl7uEajUiny2lt1Q5VKUe281mYgWMoo9A+y0Iq
+hxuMtpc+zRTK+HZkK7kdhIQZ2pfGRsErshu9xQIDAQABAoIBAHvHbbnMWyCffv5C
+Oh5N8eI7qHex6OQPf/vG49G278Nc6QIpgbNw4otxSFq5TGftESd4vcb/vM1bq8R3
+j/CelkkfOCsi4yu10a7O82wjF2Zois0qJ3a+MQu2iu6PEZbDRK1Y2NmmHIJNUzZX
+xmG8WOgm+zEre42pK4osR9XGUmNFURxAETxYyWAZl+/ixGyIA2KriJSANi2Q2sdU
+kFG6IBirjmjijobBt7QsVNyFVKfxq9TnWUyE1sQDjk7no5lGcuQPbmz6wYrB3o52
+HsqCqqAoGwRmTOs0IBNfWsYEm7gTrH7/xOo4aJILeyZEGPEqYRf9Pr2HV00IN/Zw
+dY5PWL0CgYEA/PtV0Ohpk4vxwCXC06BxCHkYvPcmDz9HRAkL9ajoxtF2sbJgzBZz
+66nSQ7iGzSvhe8fR9DtumoWFmUZWLTE6svYEdEBq0/WCeWY34ADieSolX50xbD8h
+4Tc8JPZJ63m7t08kQt1kRjkOVemmDLWJ5EXu8+cK6uK3lxQEPbFuAwsCgYEA7nwg
+b0WMSQZKiC0eglA3Qr/oMlmLE0NcoIwxMDDgU1ma+/PxOGGQ+q7lZVpgkgHcLjuJ
+JZaCB3Un9ozKp3DKXSHUWM8IMj1nrH0VY0VAFlGTs1SVYBQ+IWu0/FPpLGkSRX70
+tdNXFw1A0X4TMDEYHDCuVYjAnN3krxmvnAe8xG8CgYEAwtYnb6+vsC010VDDzg1h
+QK9TOCX4sAGCN4noJhkivg0QpybEmioouTWfdPynBVloXda1gq5LLsLq8/NR55hk
+pvQG1inOnNQW2ry5B9Jmmf61rf/40m+E/ll1/tmYcLzer/1J5h1wXw0OV2iNtHgU
+bTTXJg2pQOG/l6GY6pK+MaUCgYEAsupervv/Tf2xRs6Kt/sUKjitK7Dv3KjJwgzL
+Djts4Ds2QdV2X/Uafmdd5BbUolVQ6UJzFsb+kDe9noNrugitWQd7NpFDteVJdSd2
+Nz6J4PScmYpYcnddUVdrtW4CXfYJ5idj0VFXYgzoVwJ9xMbgLq367GKnFkiGOzNL
+AwTvAnMCgYB9vIdha1RVKRCIoyW4IyVF057Uw6w+2kmfPgBkn8maYiU299tJrDg1
+MOfsq8CExWSAuLMTKNtKqXr9lnfVZf3XuCAx2wRCMalCQNYkr8yg/cdt2NLgIfCC
+IiEHe9kBYL6igEL9+tx1kgBUnKR/G2wOh5zcSs84PcovtGudooCW/A==
+-----END RSA PRIVATE KEY-----
+
+
+sudo openssl rsa -noout -modulus -in cert.key | sudo openssl md5
+sudo openssl x509 -noout -modulus -in cert.crt | sudo openssl md5
+
+drcanvasshib1
+----------------
+HTTPD conf
+
+[ryazanov@drcanvasshib1 ~]$ grep -i drlogin /etc/httpd/conf/httpd.conf
+    ServerName drlogin.bc.edu
+    RequestHeader set X-Forwarded-Host "drlogin.bc.edu"
+    RequestHeader set X-Forwarded-Server "drlogin.bc.edu"
+    RequestHeader set Host drlogin.bc.edu
+
+[ryazanov@drcanvasshib1 opt]$ sudo rm -rf /opt/shibboleth-idp/war/tmp
+
+
+[ryazanov@drcanvasshib1 ~]$ sud su - shibadm
+[shibadm@drcanvasshib1 ~]$ /opt/tomcat/bin/shutdown.sh
+
+cp /opt/shibboleth-idp/conf/metadata-providers.xml /opt/shibboleth-idp/conf/metadata-providers.xml-login.bc.edu
+vi /opt/shibboleth-idp/conf/metadata-providers.xml # login.bc.edu -> drlogin.bc.edu
+
+cp /opt/shibboleth-idp/metadata/idp-metadata.xml  /opt/shibboleth-idp/metadata/idp-metadata.xml-login.bc.edu
+vi /opt/shibboleth-idp/metadata/idp-metadata.xml # login.bc.edu -> drlogin.bc.edu & cert
+
+
+metadata cert/key for IdP name, for drlogin.bc.edu use *.bc.edu
+cp /opt/shibboleth-idp/credentials/idp.key /opt/shibboleth-idp/credentials/idp-login.bc.edu.key
+vi /opt/shibboleth-idp/credentials/idp.key
+
+cp /opt/shibboleth-idp/credentials/idp.crt /opt/shibboleth-idp/credentials/idp-login.bc.edu.crt
+vi /opt/shibboleth-idp/credentials/idp.crt
+
+cp /opt/shibboleth-idp/conf/idp.properties /opt/shibboleth-idp/conf/idp.properties-login.bc.edu-NAM
+vi /opt/shibboleth-idp/conf/idp.properties # login.bc.edu -> drlogin.bc.edu & RemoteUser -> Password
+
+sudo cp  /opt/shibboleth-idp/conf/metadata-providers.xml /opt/shibboleth-idp/conf/metadata-providers.xml-login.bc.edu
+
+NO NEED vi /opt/shibboleth-idp/conf/metadata-providers.xml
+REMOVE (comment out) ---NO NEED THE SAME META for prod and test!!!
+
+        <!-- Canvas / Instructure LMS Metadata -->
+<!--        <metadata:MetadataProvider id="CANVASMD" xsi:type="metadata:ResourceBackedMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata">
+            <metadata:MetadataResource xsi:type="resource:FilesystemResource" file="/opt/shibboleth-idp/metadata/canvas-lms-metadata.xml" />
+        </metadata:MetadataProvider>
+-->
+
+ADD NO NEED
+        <metadata:MetadataProvider id="CANVASMD" xsi:type="metadata:ResourceBackedMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata">
+            <metadata:MetadataResource xsi:type="resource:FilesystemResource" file="/opt/shibboleth-idp/metadata/canvas-test-lms-metadata.xml" />
+        </metadata:MetadataProvider>
+before
+        <!-- Load the IdP's own metadata.  This is necessary for artifact support. -->
+ 
+add to attribute-filter.xml
+cp  vi /opt/shibboleth-idp/conf/attribute-filter.xml  vi /opt/shibboleth-idp/conf/attribute-filter.xml-login.bc.edu
+ vi /opt/shibboleth-idp/conf/attribute-filter.xml
+
+
+
+NO NEED No updates to attribute filter as EntityID for test is the same as for Prod and there is a piece for prod already:
+    <!-- Canvas : Release the principal attribute (UID) -->
+    <afp:AttributeFilterPolicy id="canvas-test">
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="http://bostoncollege.instructure.com/saml2" />
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+       
+NO NEED THE SAME META !!! add new metadata file
+vi /opt/shibboleth-idp/metadata/canvas-test-lms-metadata.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="http://bostoncollege.instructure.com/saml2">
+          <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+
+            <KeyDescriptor use="encryption">
+              <KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+                <X509Data>
+                  <X509Certificate>
+                    MIIE8TCCA9mgAwIBAgIJAOBms/PYWcPLMA0GCSqGSIb3DQEBCwUAMIGrMQswCQYD
+VQQGEwJVUzENMAsGA1UECBMEVXRhaDEXMBUGA1UEBxMOU2FsdCBMYWtlIENpdHkx
+GTAXBgNVBAoTEEluc3RydWN0dXJlLCBJbmMxEzARBgNVBAsTCk9wZXJhdGlvbnMx
+IDAeBgNVBAMTF0NhbnZhcyBTQU1MIENlcnRpZmljYXRlMSIwIAYJKoZIhvcNAQkB
+FhNvcHNAaW5zdHJ1Y3R1cmUuY29tMB4XDTE1MDQxNTAxMDAwMFoXDTE3MDQyMjAx
+MDAwMFowgasxCzAJBgNVBAYTAlVTMQ0wCwYDVQQIEwRVdGFoMRcwFQYDVQQHEw5T
+YWx0IExha2UgQ2l0eTEZMBcGA1UEChMQSW5zdHJ1Y3R1cmUsIEluYzETMBEGA1UE
+CxMKT3BlcmF0aW9uczEgMB4GA1UEAxMXQ2FudmFzIFNBTUwgQ2VydGlmaWNhdGUx
+IjAgBgkqhkiG9w0BCQEWE29wc0BpbnN0cnVjdHVyZS5jb20wggEiMA0GCSqGSIb3
+DQEBAQUAA4IBDwAwggEKAoIBAQDckDPQGWedlVGC2Z9fn1wNFmN+0IPNi6OSE1nM
+voTWx2oZlQepaAu4zI5QqOfnV0rW2V1volpoJbu0WelH0DkGzdOEQdWJjAs3nRBf
+y0evxtpg0tK5kIvGsnN6YcD41YmkfWzvwbMf0cEq1Y0wCmymF6XzOUUE4zsi0nhP
+m2Z7WiuongDQdR01UsDN13YcpD/i1JXr3YtkNnJ/a1Kc9OXNycI8M5NVo5QQgdx/
+Q7zAmTk8p9E0ZRthdOQ/PBicWx39mNmBij5KpqCWlHu3NWdgcG8KXSv5atXU8Crd
+TRJ3aGIEN9vBYIHe8MHGCzs1QlRfJmXFMkeUSOTnJJx78rMDAgMBAAGjggEUMIIB
+EDAdBgNVHQ4EFgQUo0WWVlJ1SxZOs11L85ZAuZGyuzEwgeAGA1UdIwSB2DCB1YAU
+o0WWVlJ1SxZOs11L85ZAuZGyuzGhgbGkga4wgasxCzAJBgNVBAYTAlVTMQ0wCwYD
+VQQIEwRVdGFoMRcwFQYDVQQHEw5TYWx0IExha2UgQ2l0eTEZMBcGA1UEChMQSW5z
+dHJ1Y3R1cmUsIEluYzETMBEGA1UECxMKT3BlcmF0aW9uczEgMB4GA1UEAxMXQ2Fu
+dmFzIFNBTUwgQ2VydGlmaWNhdGUxIjAgBgkqhkiG9w0BCQEWE29wc0BpbnN0cnVj
+dHVyZS5jb22CCQDgZrPz2FnDyzAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUA
+A4IBAQBV3EmmnzYqYQ5fXNZymG2WaspEW0NeFMhDXa3p3AMIQJbnnU14lR7bqIvf
+/bLW1YE0fw1kSzsw8VrkQp7k1U+kaYA3i5/FQBy2WtqUCVq2GXZA2gs5YD4nvJB/
+F57E//0kEhbATZH9+wJqDkqyIgsrSIlJjiXDth1BppGK8weboPtr9sWV24Ui0+ls
+w16XTsGlnRRO19g+gXKOZp5ApXkDrB+HwZQvZxiCuSgvJlcBzMdxVvWSL+vPtg8Y
+shIKzobIhaQ2MzXHLcxrDhW10YFPwDXh8Tfn5iU9ONsaJivuvVhtDYZD1ZzSoPpm
+q4vYqxxY/6rFJhrCtnlLepSaxlXM
+                  </X509Certificate>
+                </X509Data>
+              </KeyInfo>
+              <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc">
+                <KeySize xmlns="http://www.w3.org/2001/04/xmlenc#">128</KeySize>
+              </EncryptionMethod>
+            </KeyDescriptor>
+
+            <KeyDescriptor use="signing">
+              <KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+                <X509Data>
+                  <X509Certificate>
+                    MIIE8TCCA9mgAwIBAgIJAOBms/PYWcPLMA0GCSqGSIb3DQEBCwUAMIGrMQswCQYD
+VQQGEwJVUzENMAsGA1UECBMEVXRhaDEXMBUGA1UEBxMOU2FsdCBMYWtlIENpdHkx
+GTAXBgNVBAoTEEluc3RydWN0dXJlLCBJbmMxEzARBgNVBAsTCk9wZXJhdGlvbnMx
+IDAeBgNVBAMTF0NhbnZhcyBTQU1MIENlcnRpZmljYXRlMSIwIAYJKoZIhvcNAQkB
+FhNvcHNAaW5zdHJ1Y3R1cmUuY29tMB4XDTE1MDQxNTAxMDAwMFoXDTE3MDQyMjAx
+MDAwMFowgasxCzAJBgNVBAYTAlVTMQ0wCwYDVQQIEwRVdGFoMRcwFQYDVQQHEw5T
+YWx0IExha2UgQ2l0eTEZMBcGA1UEChMQSW5zdHJ1Y3R1cmUsIEluYzETMBEGA1UE
+CxMKT3BlcmF0aW9uczEgMB4GA1UEAxMXQ2FudmFzIFNBTUwgQ2VydGlmaWNhdGUx
+IjAgBgkqhkiG9w0BCQEWE29wc0BpbnN0cnVjdHVyZS5jb20wggEiMA0GCSqGSIb3
+DQEBAQUAA4IBDwAwggEKAoIBAQDckDPQGWedlVGC2Z9fn1wNFmN+0IPNi6OSE1nM
+voTWx2oZlQepaAu4zI5QqOfnV0rW2V1volpoJbu0WelH0DkGzdOEQdWJjAs3nRBf
+y0evxtpg0tK5kIvGsnN6YcD41YmkfWzvwbMf0cEq1Y0wCmymF6XzOUUE4zsi0nhP
+m2Z7WiuongDQdR01UsDN13YcpD/i1JXr3YtkNnJ/a1Kc9OXNycI8M5NVo5QQgdx/
+Q7zAmTk8p9E0ZRthdOQ/PBicWx39mNmBij5KpqCWlHu3NWdgcG8KXSv5atXU8Crd
+TRJ3aGIEN9vBYIHe8MHGCzs1QlRfJmXFMkeUSOTnJJx78rMDAgMBAAGjggEUMIIB
+EDAdBgNVHQ4EFgQUo0WWVlJ1SxZOs11L85ZAuZGyuzEwgeAGA1UdIwSB2DCB1YAU
+o0WWVlJ1SxZOs11L85ZAuZGyuzGhgbGkga4wgasxCzAJBgNVBAYTAlVTMQ0wCwYD
+VQQIEwRVdGFoMRcwFQYDVQQHEw5TYWx0IExha2UgQ2l0eTEZMBcGA1UEChMQSW5z
+dHJ1Y3R1cmUsIEluYzETMBEGA1UECxMKT3BlcmF0aW9uczEgMB4GA1UEAxMXQ2Fu
+dmFzIFNBTUwgQ2VydGlmaWNhdGUxIjAgBgkqhkiG9w0BCQEWE29wc0BpbnN0cnVj
+dHVyZS5jb22CCQDgZrPz2FnDyzAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUA
+A4IBAQBV3EmmnzYqYQ5fXNZymG2WaspEW0NeFMhDXa3p3AMIQJbnnU14lR7bqIvf
+/bLW1YE0fw1kSzsw8VrkQp7k1U+kaYA3i5/FQBy2WtqUCVq2GXZA2gs5YD4nvJB/
+F57E//0kEhbATZH9+wJqDkqyIgsrSIlJjiXDth1BppGK8weboPtr9sWV24Ui0+ls
+w16XTsGlnRRO19g+gXKOZp5ApXkDrB+HwZQvZxiCuSgvJlcBzMdxVvWSL+vPtg8Y
+shIKzobIhaQ2MzXHLcxrDhW10YFPwDXh8Tfn5iU9ONsaJivuvVhtDYZD1ZzSoPpm
+q4vYqxxY/6rFJhrCtnlLepSaxlXM
+                  </X509Certificate>
+                </X509Data>
+              </KeyInfo>
+            </KeyDescriptor>
+
+            <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://bostoncollege.instructure.com/login/saml/logout"/>
+
+            <AssertionConsumerService index="0" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://bostoncollege.instructure.com/saml_consume"/>
+
+            <AssertionConsumerService index="1" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://bostoncollege.instructure.com/login/saml"/>
+
+            <AssertionConsumerService index="2" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://bostoncollege.staging.instructure.com/saml_consume"/>
+
+            <AssertionConsumerService index="3" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://bostoncollege.staging.instructure.com/login/saml"/>
+
+            <AssertionConsumerService index="4" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://bostoncollege.beta.instructure.com/saml_consume"/>
+
+            <AssertionConsumerService index="5" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://bostoncollege.beta.instructure.com/login/saml"/>
+
+            <AssertionConsumerService index="6" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://bostoncollege.test.instructure.com/saml_consume"/>
+
+            <AssertionConsumerService index="7" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://bostoncollege.test.instructure.com/login/saml"/>
+
+          </SPSSODescriptor>
+          <ContactPerson contactType="technical">
+            <SurName>Administrator</SurName>
+            <EmailAddress>mailto:info@instructure.com</EmailAddress>
+          </ContactPerson>
+        </EntityDescriptor>
+
+
+
+
+
+[shibadm@drcanvasshib1 ~]$ /opt/tomcat/bin/startup.sh
+
+For SP config:
+[ryazanov@shibsp-test-01 cert-bc-wild-self]$ openssl x509 -noout -in server.crt -fingerprint
+SHA1 Fingerprint=48:C8:80:C8:AA:3A:4B:96:EF:5E:76:7D:A0:5F:F0:05:18:1C:EF:AC
+
+
+[shibadm@drcanvasshib1 ~]$ vi /opt/shibboleth-idp/conf/idp.properties
+http://shibboleth.net/pipermail/users/2016-February/027093.html
+
+https://itswiki.bc.edu:8443/display/~olibar/Canvas+Authentication
+
+
+09:25:20.781 - ERROR [net.shibboleth.idp.authn.impl.SelectAuthenticationFlow:271
+] - [136.167.8.107] - Profile Action SelectAuthenticationFlow: No potential flow
+s left to choose from, authentication will fail
+
+
+!!!! 02/24/2017
+
+[ryazanov@drcanvasshib1 ~]$ vi /etc/httpd/conf/httpd.conf changes ServerName from shib1 to drcanvasshib1
+restarted apache and tomcat
+did not help
+
+
+[ryazanov@drcanvasshib1 ~]$ sudo mv /opt/shibboleth-idp  /opt/shibboleth-idp.bak
+[ryazanov@drcanvasshib1 ~]$ cd /opt
+[ryazanov@drcanvasshib1 opt]$ sudo ln -s shibboleth-idp-3.1.1 shibboleth-idp
+
+/opt/shibboleth-idp-3.1.1/war/tmp/login.jsp -> 
+[ryazanov@drcanvasshib1 opt]$ sudo rm -rf /opt/shibboleth-idp-3.1.1/war/tmp/
+
+[ryazanov@drcanvasshib1 opt]$ sudo more /opt/apache-tomcat-8.0.21-jdk1.8.0_45/conf/Catalina/localhost/idp.xml
+<Context docBase="/opt/shibboleth-idp/war/idp.war"
+        privileged="true"
+        antiResourceLocking="false"
+        antiJARLocking="false"
+        unpackWAR="false"
+        swallowOutput="true" />
+
+[ryazanov@drcanvasshib1 opt]$ sudo rm /opt/apache-tomcat-8.0.21-jdk1.8.0_45/conf/Catalina/localhost/idp.xml
+[shibadm@drcanvasshib1 ~]$ /opt/tomcat/bin/startup.sh
+
+
+[shibadm@drcanvasshib1 ~]$ vi /opt/apache-tomcat-8.0.21-jdk1.8.0_45/conf/Catalina/localhost/idp.xml
+<Context docBase="/opt/shibboleth-idp/war/idp.war"
+        privileged="true"
+        antiResourceLocking="false"
+        unpackWAR="false"
+        swallowOutput="true" />
+~
+[shibadm@drcanvasshib1 ~]$ vi /opt/shibboleth-idp/conf/idp.properties; login.bc.edu->drlogin.bc.edu
+ShibCas-Password (twice)
+
+
+
+
+Web Login Service - Uncaught Exception
+
+A software error was encountered that prevents normal operation:
+
+org.springframework.beans.factory.BeanDefinitionStoreException: Invalid bean definition with name 'shibboleth.authn.LDAP.returnAttributes' defined in file [/opt/shibboleth-idp/conf/authn/ldap-authn-config.xml]: Could not resolve placeholder 'idp.authn.LDAP.returnAttributes' in string value "%{idp.authn.LDAP.returnAttributes}"; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'idp.authn.LDAP.returnAttributes' in string value "%{idp.authn.LDAP.returnAttributes}"
+
+
+idp.authn.LDAP.returnAttributes
+Looks like you’re missing idp.attribute.resolver.LDAP.returnAttributes in ldap.properties. 
+
+/opt/shibboleth-idp/conf/authn/ldap-authn-config.xml
+
+cp /opt/shibboleth-idp/conf/metadata-providers.xml /opt/shibboleth-idp/conf/metadata-providers.xml-login.bc.edu
+vi /opt/shibboleth-idp/conf/metadata-providers.xml # login.bc.edu -> drlogin.bc.edu
+
+cp /opt/shibboleth-idp/metadata/idp-metadata.xml  /opt/shibboleth-idp/metadata/idp-metadata.xml-login.bc.edu
+vi /opt/shibboleth-idp/metadata/idp-metadata.xml # login.bc.edu -> drlogin.bc.edu & cert
+
+
+metadata cert/key for IdP name, for drlogin.bc.edu use *.bc.edu
+cp /opt/shibboleth-idp/credentials/idp.key /opt/shibboleth-idp/credentials/idp-login.bc.edu.key
+vi /opt/shibboleth-idp/credentials/idp.key
+
+cp /opt/shibboleth-idp/credentials/idp.crt /opt/shibboleth-idp/credentials/idp-login.bc.edu.crt
+vi /opt/shibboleth-idp/credentials/idp.crt
+
+cp /opt/shibboleth-idp/conf/idp.properties /opt/shibboleth-idp/conf/idp.properties-login.bc.edu-NAM
+vi /opt/shibboleth-idp/conf/idp.properties # login.bc.edu -> drlogin.bc.edu & RemoteUser -> Password
+
+[ryazanov@drcanvasshib1 ~]$ sudo cp /opt/shibboleth-idp/messages/error-messages.properties /opt/shibboleth-idp/messages/error-messages.properties.bak
+
+vi 
+
+
+
+
+
+
+
+
+Hi All,
+
+ For Canvas testing, Elena/Joe has setup additional IDP in DR environment which is configure as drlogin.bc.edu. Ramiro has made changes on test canvas instance to configure it to talk to drlogin.bc.edu.
+
+Now we need firewall or network related changes so a user can go out to test canvas from DR network and test canvas and drlogin.bc.edu can talk to each other as well. I am planning to setup a meeting tomorrow so we can make these changes during the meeting and complete the testing for this Canvas instance against drlogin.bc.edu.
+
+Please let me know if you need more details before the meeting and feel free to extend the invitation to other members.
+
+Thanks,
+Manish
+
+
+What changes do you need?  For DR work, and especially during the DR test period, and I can make changes whenever you like.  Let me which hosts need to talk to each other and we can set it up before the meeting so _hopefully_ all we need to do is debug it if it doesn't work.
+
+Thanks,
+Phil
+
+
+Hi Phil,
+
+It would be perfect if Ramiro and I could test and debug without botherring the rest of the group...
+
+SP and IdP talk HTTPS over 443
+
+SP we will be using bostoncollege.test.instructure.com:
+ nslookup bostoncollege.test.instructure.com
+Server:         136.167.2.8
+Address:        136.167.2.8#53
+
+Non-authoritative answer:
+bostoncollege.test.instructure.com      canonical name = cluster32.test.instructure.com.
+cluster32.test.instructure.com  canonical name = cluster1.test.instructure.com.
+cluster1.test.instructure.com   canonical name = canvastest-vpc-55618592.us-east-1.elb.amazonaws.com.
+Name:   canvastest-vpc-55618592.us-east-1.elb.amazonaws.com
+Address: 52.5.33.69
+Name:   canvastest-vpc-55618592.us-east-1.elb.amazonaws.com
+Address: 52.73.242.114
+Name:   canvastest-vpc-55618592.us-east-1.elb.amazonaws.com
+Address: 52.20.50.3
+Name:   canvastest-vpc-55618592.us-east-1.elb.amazonaws.com
+Address: 52.206.158.207
+
+IdP drlogin.bc.edu is 136.167.37.165
+
+Thank you,
+Elena
+
+
+I've allowed:
+
+136.167.2.8
+52.5.33.69
+52.73.242.114
+52.20.50.3
+52.206.158.207
+
+to connect to 136.167.37.165 on port 443.  136.167.37.165 should be free to access those machines on the internet without an issue already, but do you need drlogin to also connect to 136.167.2.8 on port 443?  If so, I need to make a Fortinet firewall change, and I need to send some notifications before I do it.
+
+Thanks,
+Phil
+
+I've set up those 4 Amazon addresses to talk to 136.167.37.165 via 443/tcp.  Feel free to test at your leisure.  Let me know if there is an issue.
+
+Thanks,
+Phil
+
+Feb 24
+_______
+Elena, Ramiro and I worked out another issue this morning that the client system (the one requesting the test service, needs access to drlogin to present credentials).  I had to add another rule which allowed a group called 'all-BC' to access drlogin:443
+
+'all-BC', as defined in the DR firewall, is only the network of 136.167.0.0/16.  If you try to use services for drlogin from the DR VPN, a cell phone or other mobile device on campus or the Sterling Forest side, you might get a 'can't connect' error until we add more IPs depending on how the traffic routes through the BC network.  I'm not sure anyone will need to test from any other IP blocks, so please be aware of the issue.  If we need to add more subnets to all-BC, or just to the drlogin rule, we can do so at any time.
+
+'all-BC' is _only_ defined this way in the DR firewall.  The Fortinet and other firewalls have many more networks available which define 'all-BC'.
+
+Thanks,
+Phil
+
+
+
+https://itswiki.bc.edu:8443/display/~olibar/Canvas+Authentication
